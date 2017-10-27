@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Pokedex Assignment</title>
+        <link rel="stylesheet" href="pokedex.css">
+        <script src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>
+        <script>
+
+            $(document).ready(function(){
+                console.log("Document Ready");
+
+                var poke_add = "";
+                for (var i = 1; i <= 10; i++){
+                    poke_add = '<img src="http://pokeapi.co/media/img/' + i + '.png" alt="pokemon' + i + '" num="' + i + '">';
+                    $('#pokedex').append(poke_add);
+                    };
+
+                $('#pokedex').on('click', 'img', function() {           
+
+                    $('#info').html("");   
+
+                    var poke_num = $(this).attr('num');
+                    var poke_path = "https://pokeapi.co/api/v2/pokemon/" + poke_num + "/";
+                    
+                    console.log('set variables')
+                    console.log(poke_path);
+
+                    var link = $(this).attr('src');
+                    
+                    $.get( poke_path, function(res) {
+                        console.log(res);
+
+                        var name = res.name;
+                        $('#info').append('<h1>' + name + '</h1>');
+                        $('#info').append('<img src="' + link + '" alt="pokemon">');
+                        $('#info').append('<h3>Types</h3>');
+
+                        //Runs logic to see if there is an array and avoid returning undefined
+                        if (res.types[0] !== undefined){
+                            $('#info').append('<ul></ul>')
+                            $('ul').append('<li id="type0">' + res.types[0].type.name + '</li>');
+                            if(res.types.length > 1){
+                                for(var i = 1; i < res.types.length; i++ ){
+                                    $('ul').append('<li id="type' + i + '">' + res.types[i].type.name + '</li>')
+                                };
+                            };
+                        };
+
+                        $('#info').append('<h3>Height</h3><p>' + res.height + '</p>');
+                        $('#info').append('<h3>Weight</h3><p>' + res.weight + '</p>');
+
+                    }, "json");
+                });
+            })
+        </script>
+    </head>
+    <body>
+        <h1>My Pokedex</h1>
+        <div id="pokedex"></div>
+        <div id="info"></div>
+    </body>
+</html>
+
